@@ -1,40 +1,42 @@
 @echo off
 
-echo ICRT¦Û°Ê¤U¸ü¶}©l
+echo ICRTè‡ªå‹•ä¸‹è¼‰é–‹å§‹
 
 set year=%date:~0,4%
 set month=%date:~5,2%
 set day=%date:~8,2%
-set datepart=%year%%month%%day%
+set datepart=20240920
 
 
-echo ¥Ø«e¤é´Á %year% %datepart%
-echo ¤U¸ü³sµ² https://www.icrt.com.tw//en/ext/rss/LunchBox/%datepart%NK.mp3
+echo ç›®å‰æ—¥æœŸ %year% %datepart%
+echo ä¸‹è¼‰é€£çµ https://www.icrt.com.tw//en/ext/rss/LunchBox/%datepart%NK.mp3
 
 
 
 curl -I -s  "https://www.icrt.com.tw//en/ext/rss/LunchBox/%datepart%NK.mp3" | findstr /C:"404 Not Found">nul
 
 if %errorlevel% equ 0 (
-    echo 404 ¨S¦³¤µ¤éªº­µÀÉ
-    pause
+    echo 404 æ²’æœ‰ä»Šæ—¥çš„éŸ³æª”
+    
     exit /b 1
 )
-echo ³sµ²¥¿±`
+echo é€£çµæ­£å¸¸
 
 
 
 
-curl -o "D:\ICRT_auto\mp3\latest.mp3" "https://www.icrt.com.tw//en/ext/rss/LunchBox/%datepart%NK.mp3"
+curl -o "mp3\latest.mp3" "https://www.icrt.com.tw//en/ext/rss/LunchBox/%datepart%NK.mp3"
 if %ERRORLEVEL% NEQ 0 (
-    echo ¤U¸ü¥¢±Ñ
+    echo ä¸‹è¼‰å¤±æ•—
+	
+
     exit /b 1
 )
 
-set file2=D:\ICRT_auto\head\ICRT¶}ÀY­µ¼Ö-¤Ú«¢-½çºÖ¸U¥Á.mp3
-set file1=D:\ICRT_auto\mp3\latest.mp3
+set file2=head\ICRT_head.mp3
+set file1=mp3\latest.mp3
 
-set output_file=D:\ICRT_auto\ICRT.mp3
+set output_file=ICRT.mp3
 
-ffmpeg -y -i "concat:%file1%|%file2%" -acodec copy "%output_file%"
+ffmpeg -y -i "concat:%file1%|%file2%" -filter_complex "apad,atrim=0:360" -c:a libmp3lame -b:a 192k "%output_file%"
 
